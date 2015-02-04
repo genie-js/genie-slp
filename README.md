@@ -3,6 +3,8 @@ genie-slp
 
 Genie Engine .SLP graphic file reader in Node.js
 
+[![NPM](https://nodei.co/npm/genie-slp.png?compact=true)](https://nodei.co/npm/genie-slp)
+
 ## Usage Example
 
 ```javascript

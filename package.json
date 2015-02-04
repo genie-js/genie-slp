@@ -1,10 +1,10 @@
 { "name": "genie-slp"
 , "description": "SLP graphics file parser for Node.js"
-, "version": "0.7.0"
+, "version": "0.7.1"
 , "license": "MIT"
 , "keywords": [ "slp", "genie", "graphics", "ensemble studios", "age of empires" ]
 , "author": "René Kooi <rene@kooi.me>"
-, "main": "./src/SLP"
+, "main": "./lib/SLP"
 , "dependencies":
   { "awestruct": "^0.8.0" }
 , "repository":
@@ -12,5 +12,6 @@
   , "url" : "http://github.com/goto-bus-stop/genie-slp.git"
   }
 , "scripts":
-  { "6to5": "6to5 --out-dir lib src" }
+  { "6to5": "6to5 --out-dir lib src"
+  , "prepublish": "npm run-script 6to5" }
 }
