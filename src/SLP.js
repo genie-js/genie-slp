@@ -1,6 +1,4 @@
-import Struct from 'awestruct'
-
-const t = Struct.types
+import Struct, { types as t } from 'awestruct'
 
 // SLP commands
 const SLP_END_OF_ROW = 0x0f
@@ -31,9 +29,9 @@ const RENDER_PLAYER_FILL = 0x07
 
 // SLP Header
 let headerStruct = Struct({
-  version: t.char(4)
+  version: t.string(4)
 , numFrames: t.int32
-, comment: t.char(24)
+, comment: t.string(24)
 
 , frames: t.array('numFrames', Struct({
     cmdTableOffset: t.uint32

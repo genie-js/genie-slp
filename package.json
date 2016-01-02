@@ -6,7 +6,7 @@
 , "author": "René Kooi <rene@kooi.me>"
 , "main": "./lib/SLP"
 , "dependencies":
-  { "awestruct": "^0.8.0" }
+  { "awestruct": "^0.11.0" }
 , "repository":
   { "type": "git"
   , "url" : "http://github.com/goto-bus-stop/genie-slp.git"
