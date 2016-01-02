@@ -29,31 +29,31 @@ const RENDER_PLAYER_FILL = 0x07
 
 // SLP Header
 let headerStruct = Struct({
-  version: t.string(4)
-, numFrames: t.int32
-, comment: t.string(24)
+  version: t.string(4),
+  numFrames: t.int32,
+  comment: t.string(24),
 
-, frames: t.array('numFrames', Struct({
-    cmdTableOffset: t.uint32
-  , outlineTableOffset: t.uint32
-  , paletteOffset: t.uint32
-  , properties: t.uint32
+  frames: t.array('numFrames', Struct({
+    cmdTableOffset: t.uint32,
+    outlineTableOffset: t.uint32,
+    paletteOffset: t.uint32,
+    properties: t.uint32,
 
-  , width: t.int32
-  , height: t.int32
-  , hotspot: Struct({
-      x: t.int32
-    , y: t.int32
+    width: t.int32,
+    height: t.int32,
+    hotspot: Struct({
+      x: t.int32,
+      y: t.int32
     })
   }))
 })
 
-let getPlayerColor = (pal, idx, player) => pal[idx + 16 * player]
+const getPlayerColor = (pal, idx, player) => pal[idx + 16 * player]
 
 /**
  * @param {Buffer} buf
  */
-export default function SLP(buf) {
+export default function SLP (buf) {
   if (!(this instanceof SLP)) return new SLP(buf)
 
   this.frames = []
@@ -66,11 +66,7 @@ export default function SLP(buf) {
  * Parses the .SLP header.
  */
 SLP.prototype.parseHeader = function () {
-  var offset = 0
-    , frame
-    , buf = this.buf
-
-  var header = headerStruct(buf)
+  const header = headerStruct(this.buf)
   this.version = header.version
   this.numFrames = header.numFrames
   this.comment = header.comment
@@ -85,13 +81,13 @@ SLP.prototype.parseHeader = function () {
  * @return {Object} Frame with added `.outlines` and `.commands` properties.
  */
 SLP.prototype.parseFrame = function (id) {
-  var frame = this.frames[id]
-    , offset = frame.outlineTableOffset
-    , height = frame.height
-    , buf = this.buf
-    , outlines = []
+  const frame = this.frames[id]
+  const height = frame.height
+  const buf = this.buf
+  const outlines = []
+  let offset = frame.outlineTableOffset
 
-  let orNext = x => x ? x : buf[++offset]
+  const orNext = x => x || buf[++offset]
 
   for (let i = 0; i < height; i++) {
     let left = buf.readUInt16LE(offset)
@@ -101,88 +97,75 @@ SLP.prototype.parseFrame = function (id) {
   }
 
   offset = frame.cmdTableOffset + frame.height * 4
-  var y = 0
-    , commands = []
-    , pxCount
+  const commands = []
+  let y = 0
+  let pxCount
 
   while (y < height) {
-    let cmd = buf[offset]
-    let lowNibble = cmd & 0x0f
-    let highNibble = cmd & 0xf0
-    let lowBits = cmd & 0x03 // 0b00…0011
+    const cmd = buf[offset]
+    const lowNibble = cmd & 0x0f
+    const highNibble = cmd & 0xf0
+    const lowBits = cmd & 0x03 // 0b00…0011
 
     if (lowNibble === SLP_END_OF_ROW) {
       commands.push({ command: RENDER_NEXTLINE })
       y++
-    }
-    else if (lowBits === SLP_COLOR_LIST) {
+    } else if (lowBits === SLP_COLOR_LIST) {
       pxCount = cmd >> 2
       while (pxCount--) {
         offset++
         commands.push({ command: RENDER_COLOR, arg: /* color */ buf[offset] })
       }
-    }
-    else if (lowBits === SLP_SKIP) {
+    } else if (lowBits === SLP_SKIP) {
       pxCount = orNext(cmd >> 2)
       commands.push({ command: RENDER_SKIP, arg: pxCount })
-    }
-    else if (lowNibble === SLP_COLOR_LIST_EX) {
+    } else if (lowNibble === SLP_COLOR_LIST_EX) {
       offset++
       pxCount = (highNibble << 4) + buf[offset]
       while (pxCount--) {
         offset++
         commands.push({ command: RENDER_COLOR, arg: /* color */ buf[offset] })
       }
-    }
-    else if (lowNibble === SLP_SKIP_EX) {
+    } else if (lowNibble === SLP_SKIP_EX) {
       offset++
       pxCount = (highNibble << 4) + buf[offset]
       commands.push({ command: RENDER_SKIP, arg: pxCount })
-    }
-    else if (lowNibble === SLP_COLOR_LIST_PLAYER) {
+    } else if (lowNibble === SLP_COLOR_LIST_PLAYER) {
       pxCount = orNext(cmd >> 4)
       while (pxCount--) {
         offset++
         commands.push({ command: RENDER_PLAYER_COLOR, arg: buf[offset] })
       }
-    }
-    else if (lowNibble === SLP_FILL) {
+    } else if (lowNibble === SLP_FILL) {
       pxCount = orNext(cmd >> 4)
       offset++
       commands.push({ command: RENDER_FILL, arg: { pxCount: pxCount, color: buf[offset] } })
-    }
-    else if (lowNibble === SLP_FILL_PLAYER) {
+    } else if (lowNibble === SLP_FILL_PLAYER) {
       pxCount = orNext(cmd >> 4)
       offset++
       commands.push({ command: RENDER_PLAYER_FILL, arg: { pxCount: pxCount, color: buf[offset] } })
-    }
-    else if (lowNibble === SLP_SHADOW) {
+    } else if (lowNibble === SLP_SHADOW) {
       pxCount = orNext(cmd >> 4)
       commands.push({ command: RENDER_SHADOW, arg: pxCount })
-    }
-    else if (lowNibble === SLP_EXTENDED) {
+    } else if (lowNibble === SLP_EXTENDED) {
       if (highNibble === SLP_EX_OUTLINE1) {
         commands.push({ command: RENDER_OUTLINE, arg: 1 })
-      }
-      else if (highNibble === SLP_EX_OUTLINE2) {
+      } else if (highNibble === SLP_EX_OUTLINE2) {
         commands.push({ command: RENDER_OUTLINE, arg: 2 })
-      }
-      else if (highNibble === SLP_EX_FILL_OUTLINE1) {
+      } else if (highNibble === SLP_EX_FILL_OUTLINE1) {
         offset++
         pxCount = buf[offset]
         while (pxCount--) {
           commands.push({ command: RENDER_OUTLINE, arg: 1 })
         }
-      }
-      else if (highNibble === SLP_EX_FILL_OUTLINE2) {
+      } else if (highNibble === SLP_EX_FILL_OUTLINE2) {
         offset++
         pxCount = buf[offset]
         while (pxCount--) {
           commands.push({ command: RENDER_OUTLINE, arg: 2 })
         }
       }
-    }
-    else {
+    } else {
       throw new Error('unrecognized opcode 0x' + cmd.toString(16))
     }
     offset++
@@ -217,13 +200,13 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
   if (!palette) throw new Error('no palette passed to renderFrame')
   if (!player) player = 1
 
-  let frame = this.getFrame(frameIdx)
-  let outlines = frame.outlines
-  let pixels = Buffer(frame.width * frame.height * 4)
+  const frame = this.getFrame(frameIdx)
+  const outlines = frame.outlines
+  const pixels = Buffer(frame.width * frame.height * 4)
   let idx = 0
   let y = 0
 
-  let pushColor = (col, opac) => {
+  const pushColor = (col, opac) => {
     pixels[idx++] = col[0]
     pixels[idx++] = col[1]
     pixels[idx++] = col[2]
@@ -238,50 +221,51 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
   idx = skip * 4
 
   frame.commands.forEach(({ command, arg }) => {
+    let i, color
     switch (command) {
-    case RENDER_SKIP:
-      pixels.fill(255, idx, idx + arg * 4)
-      idx += arg * 4
-      break
-    case RENDER_NEXTLINE:
-      // fill up the rest of this line
-      pixels.fill(255, idx, idx + outlines[y].right * 4)
-      idx += outlines[y].right * 4
-      y++
-      if (y < frame.height) {
-        // transparent lines are stored as a negative outline
-        let skip = outlines[y].left
-        if (skip === SLP_LINE_EMPTY) {
-          skip = frame.width
+      case RENDER_SKIP:
+        pixels.fill(255, idx, idx + arg * 4)
+        idx += arg * 4
+        break
+      case RENDER_NEXTLINE:
+        // fill up the rest of this line
+        pixels.fill(255, idx, idx + outlines[y].right * 4)
+        idx += outlines[y].right * 4
+        y++
+        if (y < frame.height) {
+          // transparent lines are stored as a negative outline
+          let skip = outlines[y].left
+          if (skip === SLP_LINE_EMPTY) {
+            skip = frame.width
+          }
+          // fill the start of this line until the first pixel
+          pixels.fill(255, idx, idx + skip * 4)
+          idx += skip * 4
         }
-        // fill the start of this line until the first pixel
-        pixels.fill(255, idx, idx + skip * 4)
-        idx += skip * 4
-      }
-      break
-    case RENDER_COLOR:
-      pushColor(palette[arg], 0)
-      break
-    case RENDER_FILL:
-      let i = arg.pxCount
-      let color = palette[arg.color]
-      while (i--) pushColor(color, 0)
-      break
-    case RENDER_OUTLINE:
-      pushColor([ 0, 0, 0 ], drawOutline ? 0 : 255)
-      break
-    case RENDER_PLAYER_COLOR:
-      pushColor(getPlayerColor(palette, arg, player), 0)
-      break
-    case RENDER_PLAYER_FILL:
-      let i = arg.pxCount
-      let color = getPlayerColor(palette, arg.color, player)
-      while (i--) pushColor(color, 0)
-      break
-    case RENDER_SHADOW:
-      let i = arg
-      while (i--) pushColor([ 255, 0, 0 ], 0)
-      break
+        break
+      case RENDER_COLOR:
+        pushColor(palette[arg], 0)
+        break
+      case RENDER_FILL:
+        i = arg.pxCount
+        color = palette[arg.color]
+        while (i--) pushColor(color, 0)
+        break
+      case RENDER_OUTLINE:
+        pushColor([ 0, 0, 0 ], drawOutline ? 0 : 255)
+        break
+      case RENDER_PLAYER_COLOR:
+        pushColor(getPlayerColor(palette, arg, player), 0)
+        break
+      case RENDER_PLAYER_FILL:
+        i = arg.pxCount
+        color = getPlayerColor(palette, arg.color, player)
+        while (i--) pushColor(color, 0)
+        break
+      case RENDER_SHADOW:
+        i = arg
+        while (i--) pushColor([ 255, 0, 0 ], 0)
+        break
     }
   })
 
