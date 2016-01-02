@@ -1,6 +1,6 @@
 { "name": "genie-slp"
 , "description": "SLP graphics file parser for Node.js"
-, "version": "0.7.2"
+, "version": "0.7.3"
 , "license": "MIT"
 , "keywords": [ "slp", "genie", "graphics", "ensemble studios", "age of empires" ]
 , "author": "René Kooi <rene@kooi.me>"
