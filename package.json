@@ -1,18 +1,28 @@
-{ "name": "genie-slp"
-, "description": "SLP graphics file parser for Node.js"
-, "version": "0.7.4"
-, "license": "MIT"
-, "keywords": [ "slp", "genie", "graphics", "ensemble studios", "age of empires" ]
-, "author": "René Kooi <rene@kooi.me>"
-, "repository": "goto-bus-stop/genie-slp"
-, "dependencies":
-  { "awestruct": "^0.11.0" }
-, "devDependencies":
-  { "babel-cli": "^6.3.17"
-  , "babel-preset-es2015": "^6.3.13"
-  , "standard": "^5.4.1" }
-, "scripts":
-  { "build": "rm -r lib && babel --presets es2015 --out-dir lib src"
-  , "test": "standard src/*.js"
-  , "prepublish": "npm run build" }
+{
+  "name": "genie-slp",
+  "description": "SLP graphics file parser for Node.js",
+  "version": "0.7.4",
+  "license": "MIT",
+  "keywords": [
+    "slp",
+    "genie",
+    "graphics",
+    "ensemble studios",
+    "age of empires"
+  ],
+  "author": "René Kooi <rene@kooi.me>",
+  "repository": "goto-bus-stop/genie-slp",
+  "dependencies": {
+    "awestruct": "^0.11.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.7.5",
+    "babel-preset-es2015": "^6.3.13",
+    "standard": "^5.4.1"
+  },
+  "scripts": {
+    "build": "rm -r lib && babel --presets es2015 --out-dir lib src",
+    "test": "standard src/*.js",
+    "prepublish": "npm run build"
+  }
 }
