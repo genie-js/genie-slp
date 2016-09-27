@@ -87,7 +87,7 @@ SLP.prototype.parseFrame = function (id) {
   const outlines = []
   let offset = frame.outlineTableOffset
 
-  const orNext = x => x || buf[++offset]
+  const orNext = (x) => x || buf[++offset]
 
   for (let i = 0; i < height; i++) {
     let left = buf.readUInt16LE(offset)
