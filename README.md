@@ -9,14 +9,24 @@ Genie Engine .SLP graphic file reader in Node.js
 
 ```javascript
 let fs = require('fs')
-let SLP = require('slp')
-let { Png } = require('png')
 
+// Load a Palette file using the `jascpal` module
+let Palette = require('jascpal')
+let mainPalette = Palette(fs.readFileSync('palette.pal'))
+
+// Load an SLP file and render a frame
+let SLP = require('genie-slp')
 let slp = SLP(fs.readFileSync('my-file.slp'))
-let frame = slp.renderFrame(0, { player: 7, palette: mainPalette })
+let frame = slp.renderFrame(0, mainPalette, { player: 7 })
 
-let png = new Png(frame.buffer, frame.width, frame.height, 'rgba')
-require('fs').writeFile('my-file.png', png.encode())
+// Render the returned ImageData object to a PNG file
+let { PNG } = require('pngjs')
+let png = new PNG({
+  width: frame.width,
+  height: frame.height
+})
+png.data = Buffer.from(frame.data.buffer)
+png.pack().pipe(fs.createWriteStream('my-file.png'))
 ```
 
 ## API
@@ -25,8 +35,17 @@ require('fs').writeFile('my-file.png', png.encode())
 
 Creates an SLP graphic from a buffer.
 
-### SLP#renderFrame(frameIndex, { palette, player }) → { buffer, width, height }
+### SLP#renderFrame(frameIndex, palette, { player }) → ImageData
 
-Renders a frame to an `[ r, g, b, a ]` pixel Buffer. Takes a `frameIndex`, and an options object with
-a `palette` (an array of `[ r, g, b ]` colour arrays) and a `player` (ID of the player colour to use, 1-8).
-Returns an object with the `buffer`, the `width` of the frame, and the `height` of the frame.
+Renders a frame to an `[ r, g, b, a ]` ImageData object.
+
+**Parameters**
+
+  - `frameIndex` - The SLP frame ID to render.
+  - `palette` - A colour palette: an array of `[ r, g, b ]` colour arrays, probably from the [jascpal](https://github.com/goto-bus-stop/jascpal) module.
+  - `options` - Optionally, an object with properties:
+    - `player` - Player colour (1-8) to use for player-specific parts. Defaults to 1 (blue).
+    - `drawOutline` - Whether to draw an outline (used when units are behind buildings, etc). Defaults to false.
+
+In the browser, returns an ImageData object that can be drawn to a Canvas.
+In node, returns a plain object with the `data` as a Uint8ClampedArray, the `width` of the frame, and the `height` of the frame (like the ImageData API).

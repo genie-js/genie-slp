@@ -1,4 +1,5 @@
 import Struct, { types as t } from 'awestruct'
+import createImageData from './createImageData'
 
 // SLP commands
 const SLP_END_OF_ROW = 0x0f
@@ -49,6 +50,17 @@ let headerStruct = Struct({
 })
 
 const getPlayerColor = (pal, idx, player) => pal[idx + 16 * player]
+
+/**
+ * Noncompliant `Array.fill` polyfill that does everything this module needs.
+ */
+function polyFill (value, start, end) {
+  if (!end) end = this.length
+  if (!start) start = 0
+  for (var i = start; i < end; i++) {
+    this[i] = value
+  }
+}
 
 /**
  * @param {Buffer} buf
@@ -202,7 +214,9 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
 
   const frame = this.getFrame(frameIdx)
   const outlines = frame.outlines
-  const pixels = Buffer(frame.width * frame.height * 4)
+  const imageData = createImageData(frame.width, frame.height)
+  const pixels = imageData.data
+  const fill = (pixels.fill || polyFill).bind(pixels)
   let idx = 0
   let y = 0
 
@@ -217,19 +231,19 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
   if (skip === SLP_LINE_EMPTY) {
     skip = frame.width
   }
-  pixels.fill(255, 0, skip * 4)
+  fill(255, 0, skip * 4)
   idx = skip * 4
 
   frame.commands.forEach(({ command, arg }) => {
     let i, color
     switch (command) {
       case RENDER_SKIP:
-        pixels.fill(255, idx, idx + arg * 4)
+        fill(255, idx, idx + arg * 4)
         idx += arg * 4
         break
       case RENDER_NEXTLINE:
         // fill up the rest of this line
-        pixels.fill(255, idx, idx + outlines[y].right * 4)
+        fill(255, idx, idx + outlines[y].right * 4)
         idx += outlines[y].right * 4
         y++
         if (y < frame.height) {
@@ -239,35 +253,35 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
             skip = frame.width
           }
           // fill the start of this line until the first pixel
-          pixels.fill(255, idx, idx + skip * 4)
+          fill(255, idx, idx + skip * 4)
           idx += skip * 4
         }
         break
       case RENDER_COLOR:
-        pushColor(palette[arg], 0)
+        pushColor(palette[arg], 255)
         break
       case RENDER_FILL:
         i = arg.pxCount
         color = palette[arg.color]
-        while (i--) pushColor(color, 0)
+        while (i--) pushColor(color, 255)
         break
       case RENDER_OUTLINE:
-        pushColor([ 0, 0, 0 ], drawOutline ? 0 : 255)
+        pushColor([ 0, 0, 0 ], drawOutline ? 255 : 0)
         break
       case RENDER_PLAYER_COLOR:
-        pushColor(getPlayerColor(palette, arg, player), 0)
+        pushColor(getPlayerColor(palette, arg, player), 255)
         break
       case RENDER_PLAYER_FILL:
         i = arg.pxCount
         color = getPlayerColor(palette, arg.color, player)
-        while (i--) pushColor(color, 0)
+        while (i--) pushColor(color, 255)
         break
       case RENDER_SHADOW:
         i = arg
-        while (i--) pushColor([ 255, 0, 0 ], 0)
+        while (i--) pushColor([ 255, 0, 0 ], 255)
         break
     }
   })
 
-  return { buffer: pixels, width: frame.width, height: frame.height }
+  return imageData
 }
