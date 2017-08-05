@@ -231,19 +231,19 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
   if (skip === SLP_LINE_EMPTY) {
     skip = frame.width
   }
-  fill(255, 0, skip * 4)
+  fill(0, 0, skip * 4)
   idx = skip * 4
 
   frame.commands.forEach(({ command, arg }) => {
     let i, color
     switch (command) {
       case RENDER_SKIP:
-        fill(255, idx, idx + arg * 4)
+        fill(0, idx, idx + arg * 4)
         idx += arg * 4
         break
       case RENDER_NEXTLINE:
         // fill up the rest of this line
-        fill(255, idx, idx + outlines[y].right * 4)
+        fill(0, idx, idx + outlines[y].right * 4)
         idx += outlines[y].right * 4
         y++
         if (y < frame.height) {
@@ -253,7 +253,7 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
             skip = frame.width
           }
           // fill the start of this line until the first pixel
-          fill(255, idx, idx + skip * 4)
+          fill(0, idx, idx + skip * 4)
           idx += skip * 4
         }
         break
