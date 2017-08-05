@@ -31,11 +31,11 @@ png.pack().pipe(fs.createWriteStream('my-file.png'))
 
 ## API
 
-### SLP(buf)
+### `SLP(buffer: Buffer)`
 
 Creates an SLP graphic from a buffer.
 
-### SLP#renderFrame(frameIndex, palette, { player }) → ImageData
+### `SLP#renderFrame(frameIndex: number, palette: Palette, { player: number, drawOutline: boolean }): ImageData`
 
 Renders a frame to an `[ r, g, b, a ]` ImageData object.
 
