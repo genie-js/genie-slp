@@ -1,5 +1,9 @@
-import Struct, { types as t } from 'awestruct'
-import createImageData from './createImageData'
+const Struct = require('awestruct')
+const createImageData = require('./createImageData')
+
+const t = Struct.types
+
+module.exports = SLP
 
 // SLP commands
 const SLP_END_OF_ROW = 0x0f
@@ -65,7 +69,7 @@ function polyFill (value, start, end) {
 /**
  * @param {Buffer} buf
  */
-export default function SLP (buf) {
+function SLP (buf) {
   if (!(this instanceof SLP)) return new SLP(buf)
 
   this.frames = []

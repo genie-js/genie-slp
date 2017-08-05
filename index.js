@@ -1,1 +1,1 @@
-module.exports = require('./lib/SLP').default
+module.exports = require('./lib/SLP')
