@@ -49,3 +49,12 @@ Renders a frame to an `[ r, g, b, a ]` ImageData object.
 
 In the browser, returns an ImageData object that can be drawn to a Canvas.
 In node, returns a plain object with the `data` as a Uint8ClampedArray, the `width` of the frame, and the `height` of the frame (like the ImageData API).
+
+## Related
+
+ - [jascpal](https://github.com/goto-bus-stop/jascpal) - JASC Paint Shop Pro palette file parser--these are the palette files used by the Genie engine
+ - [genie-drs](https://github.com/goto-bus-stop/genie-drs) - Read and manipulate Genie Engine .DRS file archives
+
+## License
+
+[MIT](./LICENSE)
