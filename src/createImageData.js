@@ -8,7 +8,7 @@ function supportsImageData () {
 }
 
 function createImageDataSimple (width, height) {
-  return new ImageData(width, height)
+  return new window.ImageData(width, height)
 }
 
 function createImageDataCanvas (canvas, width, height) {
