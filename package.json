@@ -8,8 +8,11 @@
   },
   "devDependencies": {
     "buble": "^0.19.3",
+    "jascpal": "^0.1.4",
+    "pngjs": "^3.3.0",
     "rimraf": "^2.6.2",
-    "standard": "^10.0.0"
+    "standard": "^10.0.0",
+    "tape": "^4.8.0"
   },
   "keywords": [
     "age of empires",
@@ -24,6 +27,6 @@
   "scripts": {
     "build": "rimraf lib && buble src -o lib",
     "prepublish": "npm run build",
-    "test": "standard src/*.js"
+    "test": "tape test/*.js && standard src/*.js test/*.js"
   }
 }
