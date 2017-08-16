@@ -1,7 +1,5 @@
-const Struct = require('awestruct')
 const createImageData = require('./createImageData')
-
-const t = Struct.types
+const headerStruct = require('./header')
 
 module.exports = SLP
 
@@ -31,27 +29,6 @@ const RENDER_SHADOW = 0x04
 const RENDER_OUTLINE = 0x05
 const RENDER_FILL = 0x06
 const RENDER_PLAYER_FILL = 0x07
-
-// SLP Header
-let headerStruct = Struct({
-  version: t.string(4),
-  numFrames: t.int32,
-  comment: t.string(24),
-
-  frames: t.array('numFrames', Struct({
-    cmdTableOffset: t.uint32,
-    outlineTableOffset: t.uint32,
-    paletteOffset: t.uint32,
-    properties: t.uint32,
-
-    width: t.int32,
-    height: t.int32,
-    hotspot: Struct({
-      x: t.int32,
-      y: t.int32
-    })
-  }))
-})
 
 const getPlayerColor = (pal, idx, player) => pal[idx + 16 * player]
 
