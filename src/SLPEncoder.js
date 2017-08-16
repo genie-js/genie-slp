@@ -156,7 +156,11 @@ function renderCommandsToSlpFrame ({ width, height, commands, baseOffset }) {
       x += arg.pxCount
     } else if (command === RENDER_SKIP) {
       if (x === 0) {
-        outlines[y].left = arg
+        if (arg === width) {
+          outlines[y].left = SLP_LINE_EMPTY
+        } else {
+          outlines[y].left = arg
+        }
       } else if (x + arg === width) {
         outlines[y].right = arg
       } else if (arg >= 64) {
