@@ -2,16 +2,7 @@
   "name": "genie-slp",
   "description": "SLP graphics file parser for Node.js",
   "version": "1.1.0",
-  "license": "MIT",
-  "keywords": [
-    "slp",
-    "genie",
-    "graphics",
-    "ensemble studios",
-    "age of empires"
-  ],
   "author": "René Kooi <rene@kooi.me>",
-  "repository": "goto-bus-stop/genie-slp",
   "dependencies": {
     "awestruct": "^1.0.0"
   },
@@ -21,9 +12,19 @@
     "rimraf": "^2.6.2",
     "standard": "^10.0.0"
   },
+  "keywords": [
+    "age of empires",
+    "ensemble studios",
+    "genie",
+    "graphics",
+    "slp"
+  ],
+  "license": "MIT",
+  "main": "lib/SLP.js",
+  "repository": "goto-bus-stop/genie-slp",
   "scripts": {
     "build": "rimraf lib && babel --presets es2015 --out-dir lib src",
-    "test": "standard src/*.js",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "standard src/*.js"
   }
 }
