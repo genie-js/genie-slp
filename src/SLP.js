@@ -59,8 +59,8 @@ const getPlayerColor = (pal, idx, player) => pal[idx + 16 * player]
  * Noncompliant `Array.fill` polyfill that does everything this module needs.
  */
 function polyFill (value, start, end) {
-  if (!end) end = this.length
-  if (!start) start = 0
+  if (end === undefined) end = this.length
+  if (start === undefined) start = 0
   for (var i = start; i < end; i++) {
     this[i] = value
   }
