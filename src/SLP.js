@@ -59,13 +59,13 @@ function SLP (buf) {
  * Parses the .SLP header.
  */
 SLP.prototype.parseHeader = function () {
-  const header = headerStruct(this.buf)
+  const header = headerStruct.decode(this.buf)
   this.version = header.version
   this.numFrames = header.numFrames
   this.comment = header.comment
   this.frames = header.frames
 
-  this.bodyOffset = /* header */ 32 + /* frames */ 32 * header.numFrames
+  this.bodyOffset = headerStruct.decode.bytes
 }
 
 /**

@@ -90,7 +90,7 @@ function pixelsToRenderCommands (palette, { width, height, data }) {
     const c = (r << 16) + (g << 8) + b
     const index = palette[c]
     if (!index) {
-      throw new Error(`[${r} ${g} ${b}] is not in palette`)
+      throw new Error(`Missing color: [${r} ${g} ${b}] is not in palette`)
     }
     if (prevCommand === RENDER_FILL && index === prevArg.color) {
       prevArg.pxCount++
@@ -187,7 +187,12 @@ function renderCommandsToSlpFrame ({ width, height, commands, baseOffset }) {
   return buffer.slice(0, offset)
 }
 
-SLPEncoder.prototype.addFrame = function ({ width, height, data, hotspot }) {
+SLPEncoder.prototype.addFrame = function ({
+  width,
+  height,
+  data,
+  hotspot = { x: 0, y: 0 }
+}) {
   const commands = pixelsToRenderCommands(this.colorIndices, { width, height, data })
 
   this.frames.push({
@@ -197,7 +202,7 @@ SLPEncoder.prototype.addFrame = function ({ width, height, data, hotspot }) {
     properties: 0,
     width,
     height,
-    hotspot: hotspot || { x: 0, y: 0 },
+    hotspot,
     data,
     commands
   })
@@ -213,7 +218,7 @@ SLPEncoder.prototype.encode = function () {
     frames: this.frames
   }
 
-  let offset = headerStruct.size(header)
+  let offset = headerStruct.encodingLength(header)
   const frameBuffers = this.frames.map((frame) => {
     frame.outlineTableOffset = offset
     frame.cmdTableOffset = offset + frame.height * 4
