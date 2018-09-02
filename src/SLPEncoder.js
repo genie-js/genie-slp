@@ -1,3 +1,4 @@
+const Palette = require('jascpal')
 const headerStruct = require('./header')
 
 module.exports = SLPEncoder
@@ -39,6 +40,23 @@ function padSlice (str, len, padding = '\0') {
   return str
 }
 
+function detectPalette (data, options = {}) {
+  const mainColors = Object.create(null)
+  for (let i = 0; i < data.length; i += 4) {
+    const idx = String((data[i] << 16) + (data[i + 1] << 8) + data[i + 2])
+    if (!mainColors[idx]) mainColors[idx] = data.slice(0, 3)
+  }
+
+  const palette = Object.keys(mainColors).map((x) => mainColors[x])
+
+  // Pad.
+  while (palette.length < 256) {
+    palette.push([ 0, 0, 0 ])
+  }
+
+  return Palette(palette)
+}
+
 function SLPEncoder (options = {}) {
   if (!(this instanceof SLPEncoder)) return new SLPEncoder(options)
 
@@ -58,6 +76,8 @@ function SLPEncoder (options = {}) {
     this.colorIndices[c] = i
   }
 }
+
+SLPEncoder.detectPalette = detectPalette
 
 function pixelsToRenderCommands (palette, { width, height, data }) {
   const commands = []
