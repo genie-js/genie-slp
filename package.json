@@ -22,7 +22,7 @@
     "graphics",
     "slp"
   ],
-  "license": "MIT",
+  "license": "GPL-3.0",
   "main": "lib/SLP.js",
   "repository": "goto-bus-stop/genie-slp",
   "scripts": {

@@ -57,4 +57,4 @@ In node, returns a plain object with the `data` as a Uint8ClampedArray, the `wid
 
 ## License
 
-[MIT](./LICENSE)
+[GPL-3.0](./LICENSE.md)
