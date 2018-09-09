@@ -4,7 +4,8 @@
   "version": "1.1.0",
   "author": "René Kooi <rene@kooi.me>",
   "dependencies": {
-    "awestruct": "^1.0.0"
+    "awestruct": "^1.0.0",
+    "nanoassert": "^1.1.0"
   },
   "devDependencies": {
     "buble": "^0.19.3",
@@ -27,6 +28,6 @@
   "scripts": {
     "build": "rimraf lib && buble src -o lib",
     "prepublish": "npm run build",
-    "test": "tape test/*.js && standard src/*.js test/*.js"
+    "test": "node test && standard src/*.js test/*.js"
   }
 }

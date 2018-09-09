@@ -1,3 +1,4 @@
+const assert = require('nanoassert')
 const createImageData = require('./createImageData')
 const headerStruct = require('./header')
 
@@ -105,6 +106,7 @@ SLP.prototype.parseFrame = function (id) {
       y++
     } else if (lowBits === SLP_COLOR_LIST) {
       pxCount = cmd >> 2
+      assert.ok(pxCount > 0, 'genie-slp: found color list of length 0')
       while (pxCount--) {
         offset++
         commands.push({ command: RENDER_COLOR, arg: /* color */ buf[offset] })

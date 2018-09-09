@@ -1,3 +1,4 @@
+const assert = require('nanoassert')
 const Palette = require('jascpal')
 const headerStruct = require('./header')
 
@@ -109,7 +110,7 @@ function pixelsToRenderCommands (palette, { width, height, data }) {
     const b = data[i + 2]
     const c = (r << 16) + (g << 8) + b
     const index = palette[c]
-    if (!index) {
+    if (index === undefined) {
       throw new Error(`Missing color: [${r} ${g} ${b}] is not in palette`)
     }
     if (prevCommand === RENDER_FILL && index === prevArg.color) {
@@ -154,14 +155,27 @@ function renderCommandsToSlpFrame ({ width, height, commands, baseOffset }) {
       x = 0
       outlines[y] = { left: 0, right: 0 }
     } else if (command === RENDER_COLOR) {
-      let end = i
-      while (commands[end].command === RENDER_COLOR) {
+      let end = i + 1
+      let pxCount = 1
+      while (x + pxCount < width && commands[end].command === RENDER_COLOR) {
         end++
+        pxCount++
       }
-      buffer[offset++] = SLP_COLOR_LIST | ((end - i) << 2)
-      for (; i < end; i++) {
-        buffer[offset++] = commands[i].arg
-        x++
+      if (pxCount < 2 ** 6) {
+        buffer[offset++] = SLP_COLOR_LIST | (pxCount << 2)
+        for (; i < end; i++) {
+          buffer[offset++] = commands[i].arg
+          x++
+        }
+      } else {
+        // where N = pxCount, c = command:
+        // 0bNNNNccccNNNNNNNN
+        buffer[offset++] = SLP_COLOR_LIST_EX | ((pxCount & 0x0f00) >> 4)
+        buffer[offset++] = pxCount & 0xff
+        for (; i < end; i++) {
+          buffer[offset++] = commands[i].arg
+          x++
+        }
       }
       i--
     } else if (command === RENDER_FILL) {
