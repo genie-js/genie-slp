@@ -65,7 +65,7 @@ function SLPEncoder (options = {}) {
     throw new Error('SLPEncoder: `palette` option is required')
   }
 
-  this.version = options.version || '1.00'
+  this.version = options.version || '2.0N'
   this.comment = options.comment || ''
   this.palette = options.palette
   this.frames = []
@@ -116,11 +116,17 @@ function pixelsToRenderCommands (palette, { width, height, data }) {
     if (prevCommand === RENDER_FILL && index === prevArg.color) {
       prevArg.pxCount++
     } else if (prevCommand === RENDER_COLOR && index === prevArg) {
-      commands.pop()
-      push(RENDER_FILL, {
-        pxCount: 2,
-        color: index
-      })
+      const prev = commands[commands.length - 2]
+      if (prev.command === RENDER_COLOR && prev.arg === index) {
+        commands.pop()
+        commands.pop()
+        push(RENDER_FILL, {
+          pxCount: 3,
+          color: index
+        })
+      } else {
+        push(RENDER_COLOR, index)
+      }
     } else {
       push(RENDER_COLOR, index)
     }
@@ -196,7 +202,10 @@ function renderCommandsToSlpFrame ({ width, height, commands, baseOffset }) {
         }
       } else if (x + arg === width) {
         outlines[y].right = arg
-      } else if (arg >= 64) {
+      } else if (arg >= 2 ** 8) {
+        buffer[offset++] = SLP_SKIP_EX | ((arg & 0x0f00) >> 4)
+        buffer[offset++] = arg & 0xff
+      } else if (arg >= 2 ** 6) {
         buffer[offset++] = SLP_SKIP
         buffer[offset++] = arg
       } else {
