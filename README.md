@@ -52,6 +52,7 @@ In node, returns a plain object with the `data` as a Uint8ClampedArray, the `wid
 
 ## Related
 
+ - [slp-render](https://github.com/goto-bus-stop/slp-render) - CLI for this module.
  - [jascpal](https://github.com/goto-bus-stop/jascpal) - JASC Paint Shop Pro palette file parser--these are the palette files used by the Genie engine
  - [genie-drs](https://github.com/goto-bus-stop/genie-drs) - Read and manipulate Genie Engine .DRS file archives
 
