@@ -3,7 +3,7 @@ genie-slp
 
 Genie Engine .SLP graphic file reader in Node.js
 
-[![NPM](https://nodei.co/npm/genie-slp.png?compact=true)](https://nodei.co/npm/genie-slp)
+[![NPM](https://nodei.co/npm/genie-slp.png?compact=true)](https://nodei.co/npm/genie-slp) [![Greenkeeper badge](https://badges.greenkeeper.io/genie-js/genie-slp.svg)](https://greenkeeper.io/)
 
 ## Usage Example
 
