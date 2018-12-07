@@ -2,7 +2,7 @@
   "name": "genie-slp",
   "description": "SLP graphics file parser for Node.js",
   "version": "1.1.0",
-  "author": "René Kooi <rene@kooi.me>",
+  "author": "Renée Kooi <renee@kooi.me>",
   "dependencies": {
     "awestruct": "^1.0.0"
   },
@@ -20,7 +20,7 @@
   ],
   "license": "MIT",
   "main": "lib/SLP.js",
-  "repository": "goto-bus-stop/genie-slp",
+  "repository": "genie-js/genie-slp",
   "scripts": {
     "build": "rimraf lib && buble src -o lib",
     "prepublish": "npm run build",

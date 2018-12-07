@@ -42,7 +42,7 @@ Renders a frame to an `[ r, g, b, a ]` ImageData object.
 **Parameters**
 
   - `frameIndex` - The SLP frame ID to render.
-  - `palette` - A colour palette: an array of `[ r, g, b ]` colour arrays, probably from the [jascpal](https://github.com/goto-bus-stop/jascpal) module.
+  - `palette` - A colour palette: an array of `[ r, g, b ]` colour arrays, probably from the [jascpal](https://github.com/genie-js/jascpal) module.
   - `options` - Optionally, an object with properties:
     - `player` - Player colour (1-8) to use for player-specific parts. Defaults to 1 (blue).
     - `drawOutline` - Whether to draw an outline (used when units are behind buildings, etc). Defaults to false.
@@ -52,9 +52,9 @@ In node, returns a plain object with the `data` as a Uint8ClampedArray, the `wid
 
 ## Related
 
- - [slp-render](https://github.com/goto-bus-stop/slp-render) - CLI for this module.
- - [jascpal](https://github.com/goto-bus-stop/jascpal) - JASC Paint Shop Pro palette file parser--these are the palette files used by the Genie engine
- - [genie-drs](https://github.com/goto-bus-stop/genie-drs) - Read and manipulate Genie Engine .DRS file archives
+ - [slp-render](https://github.com/genie-js/slp-render) - CLI for this module.
+ - [jascpal](https://github.com/genie-js/jascpal) - JASC Paint Shop Pro palette file parser--these are the palette files used by the Genie engine
+ - [genie-drs](https://github.com/genie-js/genie-drs) - Read and manipulate Genie Engine .DRS file archives
 
 ## License
 
