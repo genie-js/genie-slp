@@ -33,7 +33,7 @@ const RENDER_FILL = 0x06
 const RENDER_PLAYER_FILL = 0x07
 
 // SLP Header
-let headerStruct = Struct({
+const headerStruct = Struct({
   version: t.string(4),
   numFrames: t.int32,
   comment: t.string(24),
@@ -106,8 +106,8 @@ SLP.prototype.parseFrame = function (id) {
   const orNext = (x) => x || buf[++offset]
 
   for (let i = 0; i < height; i++) {
-    let left = buf.readUInt16LE(offset)
-    let right = buf.readUInt16LE(offset + 2)
+    const left = buf.readUInt16LE(offset)
+    const right = buf.readUInt16LE(offset + 2)
     outlines.push({ left, right })
     offset += 4
   }
@@ -270,7 +270,7 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
         while (i--) pushColor(color, 255)
         break
       case RENDER_OUTLINE:
-        pushColor([ 0, 0, 0 ], drawOutline ? 255 : 0)
+        pushColor([0, 0, 0], drawOutline ? 255 : 0)
         break
       case RENDER_PLAYER_COLOR:
         pushColor(getPlayerColor(palette, arg, player), 255)
@@ -282,7 +282,7 @@ SLP.prototype.renderFrame = function (frameIdx, palette, { player, drawOutline }
         break
       case RENDER_SHADOW:
         i = arg
-        while (i--) pushColor([ 255, 0, 0 ], 255)
+        while (i--) pushColor([255, 0, 0], 255)
         break
     }
   })
