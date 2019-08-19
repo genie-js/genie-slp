@@ -9,7 +9,7 @@
   "devDependencies": {
     "buble": "^0.19.3",
     "rimraf": "^2.6.2",
-    "standard": "^13.0.1"
+    "standard": "^14.0.0"
   },
   "keywords": [
     "age of empires",
