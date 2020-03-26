@@ -7,7 +7,7 @@
     "awestruct": "^1.0.0"
   },
   "devDependencies": {
-    "buble": "^0.19.3",
+    "buble": "^0.20.0",
     "rimraf": "^2.6.2",
     "standard": "^14.0.0"
   },
